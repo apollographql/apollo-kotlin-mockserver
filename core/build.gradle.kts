@@ -61,7 +61,6 @@ kotlin {
   sourceSets {
     findByName("commonMain")?.apply {
       dependencies {
-        api(libs.apollo.annotations)
         api(libs.okio)
         implementation(libs.atomicfu.library.get().toString()) {
           because("We need locks for native (we don't use the gradle plugin rewrite)")

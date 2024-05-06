@@ -1,8 +1,5 @@
-@file:OptIn(ApolloInternal::class, ApolloInternal::class)
-
 package com.apollographql.apollo3.mockserver.test
 
-import com.apollographql.apollo3.annotations.ApolloInternal
 import com.apollographql.apollo3.mockserver.MockResponse
 import com.apollographql.apollo3.mockserver.MultipartBodyImpl
 import com.apollographql.apollo3.mockserver.asChunked

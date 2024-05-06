@@ -1,7 +1,5 @@
 package com.apollographql.apollo3.mockserver
 
-import com.apollographql.apollo3.annotations.ApolloDeprecatedSince
-import com.apollographql.apollo3.annotations.ApolloExperimental
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -48,7 +46,6 @@ interface MockServer : Closeable {
   suspend fun port(): Int
 
   @Deprecated("use close instead", ReplaceWith("close()"), DeprecationLevel.ERROR)
-  @ApolloDeprecatedSince(ApolloDeprecatedSince.Version.v4_0_0)
   suspend fun stop() = close()
 
   /**
@@ -275,7 +272,6 @@ fun MockServer(): MockServer = MockServerImpl(
 )
 
 @Deprecated("Use MockServer.Builder() instead", level = DeprecationLevel.ERROR)
-@ApolloDeprecatedSince(ApolloDeprecatedSince.Version.v4_0_0)
 fun MockServer(handler: MockServerHandler): MockServer =
   MockServerImpl(
       handler,
@@ -285,7 +281,6 @@ fun MockServer(handler: MockServerHandler): MockServer =
   )
 
 @Deprecated("Use enqueueString instead", ReplaceWith("enqueueString(string = string, delayMs = delayMs, statusCode = statusCode)"), DeprecationLevel.ERROR)
-@ApolloDeprecatedSince(ApolloDeprecatedSince.Version.v4_0_0)
 fun MockServer.enqueue(string: String = "", delayMs: Long = 0, statusCode: Int = 200) = enqueueString(string, delayMs, statusCode)
 
 fun MockServer.enqueueString(string: String = "", delayMs: Long = 0, statusCode: Int = 200, contentType: String = "text/plain") {
@@ -326,13 +321,11 @@ fun MockServer.assertNoRequest() {
 }
 
 
-@ApolloExperimental
 interface MultipartBody {
   fun enqueuePart(bytes: ByteString, isLast: Boolean)
   fun enqueueDelay(delayMillis: Long)
 }
 
-@ApolloExperimental
 fun MultipartBody.enqueueStrings(parts: List<String>, responseDelayMillis: Long = 0, chunksDelayMillis: Long = 0) {
   enqueueDelay(responseDelayMillis)
   parts.withIndex().forEach { (index, value) ->
@@ -342,13 +335,11 @@ fun MultipartBody.enqueueStrings(parts: List<String>, responseDelayMillis: Long 
 }
 
 @Deprecated("Use enqueueStrings()", ReplaceWith("enqueueMultipart(\"application/json\").enqueueStrings(parts)"), level = DeprecationLevel.ERROR)
-@ApolloDeprecatedSince(ApolloDeprecatedSince.Version.v4_0_0)
 @Suppress("UNUSED_PARAMETER")
 fun MockServer.enqueueMultipart(
     parts: List<String>,
 ): Nothing = TODO()
 
-@ApolloExperimental
 fun MockServer.enqueueMultipart(
     partsContentType: String,
     headers: Map<String, String> = emptyMap(),
@@ -367,13 +358,11 @@ fun MockServer.enqueueMultipart(
   return multipartBody
 }
 
-@ApolloExperimental
 interface WebSocketBody {
   fun enqueueMessage(message: WebSocketMessage)
   fun close()
 }
 
-@ApolloExperimental
 fun MockServer.enqueueWebSocket(
     statusCode: Int = 101,
     headers: Map<String, String> = emptyMap(),
@@ -396,7 +385,6 @@ fun MockServer.enqueueWebSocket(
   return webSocketBody
 }
 
-@ApolloExperimental
 suspend fun MockServer.awaitWebSocketRequest(timeout: Duration = 30.seconds): WebsocketMockRequest {
   return awaitAnyRequest(timeout) as WebsocketMockRequest
 }

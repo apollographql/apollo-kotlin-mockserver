@@ -1,6 +1,5 @@
 package com.apollographql.apollo3.mockserver
 
-import com.apollographql.apollo3.annotations.ApolloExperimental
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.withTimeout
 import okio.ByteString
@@ -36,7 +35,6 @@ class MockRequest(
     val body: ByteString = ByteString.EMPTY,
 ) : MockRequestBase
 
-@ApolloExperimental
 class WebsocketMockRequest(
     override val method: String,
     override val path: String,
@@ -68,21 +66,15 @@ class WebsocketMockRequest(
   internal val messages = Channel<Result<WebSocketMessage>>(Channel.UNLIMITED)
 }
 
-@ApolloExperimental
 sealed interface WebSocketMessage
 
-@ApolloExperimental
 class TextMessage(val text: String) : WebSocketMessage
 
-@ApolloExperimental
 class DataMessage(val data: ByteArray) : WebSocketMessage
 
-@ApolloExperimental
 class CloseFrame(val code: Int?, val reason: String?) : WebSocketMessage
 
-@ApolloExperimental
 data object PingFrame : WebSocketMessage
 
-@ApolloExperimental
 data object PongFrame : WebSocketMessage
 

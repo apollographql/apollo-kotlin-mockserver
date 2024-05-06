@@ -12,7 +12,6 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kgp = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin-plugin" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
-apollo-annotations = { group = "com.apollographql.apollo3", name = "apollo-annotations", version = "4.0.0-beta.6" }
 atomicfu-library = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "atomicfu" }
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-server-cio = { group = "io.ktor", name = "ktor-server-cio", version.ref = "ktor" }

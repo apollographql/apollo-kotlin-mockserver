@@ -1,6 +1,5 @@
 package com.apollographql.apollo3.mockserver
 
-import com.apollographql.apollo3.annotations.ApolloDeprecatedSince
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
@@ -19,7 +18,6 @@ class MockResponse private constructor(
 ) {
 
   @Deprecated("Use MockResponse.Builder instead", ReplaceWith("MockResponse.Builder().statusCode(statusCode).headers(headers).body(body).delayMillis(delayMillis).build()"), level = DeprecationLevel.ERROR)
-  @ApolloDeprecatedSince(ApolloDeprecatedSince.Version.v3_3_1)
   constructor(
       statusCode: Int = 200,
       body: Flow<ByteString> = emptyFlow(),

@@ -1,6 +1,5 @@
 package com.apollographql.apollo3.mockserver
 
-import com.apollographql.apollo3.annotations.ApolloExperimental
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.aSocket
@@ -22,7 +21,6 @@ import io.ktor.network.sockets.Socket as WrappedSocket
 
 actual fun TcpServer(port: Int): TcpServer = KtorTcpServer(port)
 
-@ApolloExperimental
 class KtorTcpServer(port: Int = 0, private val acceptDelayMillis: Int = 0, dispatcher: CoroutineDispatcher = Dispatchers.IO) : TcpServer {
   private val selectorManager = SelectorManager(dispatcher)
   private val scope = CoroutineScope(SupervisorJob() + dispatcher)
