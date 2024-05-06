@@ -7,4 +7,4 @@ MockServer was initially designed for Apollo Kotlin requirements on having a moc
 The API is very minimal. HTTPS and HTTP2/3 are not supported. Performance is a non-goal.
 
 * Do not use for production APIs.
-* Do not use in libraries. 
+* Do not use in libraries where it may end up as a transitive dependency. It is obviously ok to use in tests.  
