@@ -1,4 +1,5 @@
 import com.gradleup.librarian.core.configureBcv
+import com.gradleup.librarian.core.librarianRoot
 
 buildscript {
     repositories {
@@ -9,4 +10,4 @@ buildscript {
     }
 }
 
-configureBcv()
+librarianRoot()

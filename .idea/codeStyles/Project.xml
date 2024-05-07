@@ -23,7 +23,6 @@
       <option name="CONTINUATION_INDENT_FOR_CHAINED_CALLS" value="true" />
       <option name="CONTINUATION_INDENT_IN_IF_CONDITIONS" value="true" />
       <option name="CONTINUATION_INDENT_IN_ELVIS" value="true" />
-      <option name="ALLOW_TRAILING_COMMA" value="true" />
     </JetCodeStyleSettings>
     <Properties>
       <option name="KEEP_BLANK_LINES" value="true" />

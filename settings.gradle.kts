@@ -6,5 +6,5 @@ pluginManagement {
 
 includeBuild("build-logic")
 
-include("core")
+include("mockserver")
 include("kdoc")
