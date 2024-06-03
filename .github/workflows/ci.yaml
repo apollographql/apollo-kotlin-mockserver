@@ -1,4 +1,4 @@
-name: CI
+name: publishIfNeeded
 
 on:
   push:
@@ -9,15 +9,15 @@ on:
     branches:
       - "*"
 jobs:
-  ci:
-    runs-on: macos-14
+  publishIfNeeded:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
       - run: |
-          ./gradlew ci 
+          ./gradlew librarianPublishIfNeeded
         env:
-          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.LIBRARIAN_SONATYPE_USERNAME }}
-          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.LIBRARIAN_SONATYPE_PASSWORD }}
-          LIBRARIAN_SIGNING_PRIVATE_KEY: ${{ secrets.LIBRARIAN_SIGNING_PRIVATE_KEY }}
-          LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD }}
+          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          LIBRARIAN_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.GPG_PRIVATE_KEY_PASSWORD }}

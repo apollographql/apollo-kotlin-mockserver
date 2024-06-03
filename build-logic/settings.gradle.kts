@@ -13,5 +13,3 @@ dependencyResolutionManagement {
         }
     }
 }
-
-includeBuild("../../librarian")

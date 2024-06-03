@@ -6,5 +6,4 @@ pluginManagement {
 
 includeBuild("build-logic")
 
-include("mockserver")
-include("kdoc")
+include("apollo-mockserver")
