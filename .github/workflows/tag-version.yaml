@@ -17,3 +17,5 @@ jobs:
       - uses: gradleup/librarian/tag-version@main
         with:
           versionToRelease: ${{ inputs.versionToRelease }}
+    env:
+      GH_TOKEN: ${{ github.token }}
