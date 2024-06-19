@@ -17,6 +17,8 @@ jobs:
       - uses: gradleup/librarian/prepare-release@main
         with:
           versionToRelease: ${{ inputs.versionToRelease }}
+      # Trigger a workflow manually because actions cannot trigger workflows to avoid endless loops
+      # https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#triggering-further-workflow-runs
       - run: |
           gh workflow run publish-release.yaml --ref v${{ inputs.versionToRelease }}
     env:
