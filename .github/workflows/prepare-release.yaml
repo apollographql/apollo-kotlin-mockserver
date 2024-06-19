@@ -15,9 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
       - uses: gradleup/librarian/prepare-release@main
-      - run: |
-          gh workflow run publish-release.yaml --ref v${{ inputs.versionToRelease }}
         with:
           versionToRelease: ${{ inputs.versionToRelease }}
+      - run: |
+          gh workflow run publish-release.yaml --ref v${{ inputs.versionToRelease }}
     env:
       GH_TOKEN: ${{ github.token }}
