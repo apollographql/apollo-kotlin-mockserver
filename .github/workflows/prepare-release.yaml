@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  release:
+  prepare-release:
     runs-on: macos-latest
 
     steps:

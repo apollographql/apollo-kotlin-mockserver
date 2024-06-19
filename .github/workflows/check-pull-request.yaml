@@ -3,7 +3,7 @@ name: check-pull-request
 on: pull_request
 
 jobs:
-  pr:
+  check-pull-request:
     runs-on: macos-latest
 
     steps:
