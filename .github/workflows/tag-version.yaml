@@ -1,0 +1,25 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionToRelease:
+        description: 'The version to release'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    steps:
+      - uses: gradleup/librarian/tag-version@main
+        with:
+          ${{ inputs.versionToRelease }}
+      - run: |
+          ./gradlew librarianReleaseStagingRepo
+        env:
+          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          LIBRARIAN_SIGNING_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          LIBRARIAN_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.GPG_PRIVATE_KEY_PASSWORD }}
