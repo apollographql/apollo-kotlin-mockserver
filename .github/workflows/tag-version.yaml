@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: gradleup/librarian/tag-version@main
         with:
-          ${{ inputs.versionToRelease }}
+          versionToRelease: ${{ inputs.versionToRelease }}
       - run: |
           ./gradlew librarianReleaseStagingRepo
         env:
