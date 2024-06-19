@@ -1,4 +1,4 @@
-name: tag-version
+name: prepare-release
 
 on:
   workflow_dispatch:
@@ -14,7 +14,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 #v4.1.7
-      - uses: gradleup/librarian/tag-version@main
+      - run: |
+          gh workflow trigger publish-release.yaml --ref v${{ inputs.versionToRelease }}
+      - uses: gradleup/librarian/prepare-release@main
         with:
           versionToRelease: ${{ inputs.versionToRelease }}
     env:
