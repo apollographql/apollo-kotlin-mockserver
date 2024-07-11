@@ -1,9 +1,0 @@
-**/.idea/*
-!**/.idea/codeStyles
-!**/.idea/icon.png
-!**/.idea/runConfigurations
-!**/.idea/scopes
-.gradle
-build
-.terraform
-.kotlin
