@@ -4,6 +4,4 @@ pluginManagement {
     }
 }
 
-includeBuild("build-logic")
-
 include("apollo-mockserver")
