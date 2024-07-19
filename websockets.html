@@ -1,0 +1,37 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="robots" content="noindex"><meta name="built-on" content="2024-07-19T16:15:25.885794246"><title>WebSockets | Apollo Adapters</title><script type="application/json" id="virtual-toc-data">[{"id":"mock-a-websocket-session","level":0,"title":"Mock a WebSocket session","anchor":"#mock-a-websocket-session"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b267/app.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="images/favicon-96x96.png"><link rel="icon" type="image/png" sizes="32x32" href="images/favicon-192x192.png"><meta name="image" content=""><!-- Open Graph --><meta property="og:title" content="WebSockets | Apollo Adapters"><meta property="og:description" content=""><meta property="og:image" content=""><meta property="og:site_name" content="Apollo Adapters Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="writerside-documentation/websockets.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content=""><meta name="twitter:title" content="WebSockets | Apollo Adapters"><meta name="twitter:description" content=""><meta name="twitter:creator" content=""><meta name="twitter:image:src" content=""><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "@id": "writerside-documentation/websockets.html#webpage",
+    "url": "writerside-documentation/websockets.html",
+    "name": "WebSockets | Apollo Adapters",
+    "description": "",
+    "image": "",
+    "inLanguage":"en-US"
+}</script><!-- End Schema.org --><!-- Schema.org WebSite --><script type="application/ld+json">{
+    "@type": "WebSite",
+    "@id": "writerside-documentation/#website",
+    "url": "writerside-documentation/",
+    "name": "Apollo Adapters Help"
+}</script><!-- End Schema.org --></head><body data-id="websockets" data-main-title="WebSockets" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="" data-edit-url="https://github.com/apollographql/apollo-kotlin-mockserver/edit/main/Writerside/topics/websockets.md"><div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>Apollo Adapters  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="websockets" id="websockets.md">WebSockets</h1><p id="i8e7rrj_2">Apollo Kotlin MockServer supports WebSockets</p><section class="chapter"><h2 id="mock-a-websocket-session" data-toc="mock-a-websocket-session">Mock a WebSocket session</h2><p id="i8e7rrj_3">To enqueue a WebSocket response, use <code class="code" id="i8e7rrj_4">MockServer.enqueueWebSocket</code>:</p><div class="code-block" data-lang="kotlin">
+val responseBody = mockServer.enqueueWebSocket()
+</div><p id="i8e7rrj_6">When your client sends a request, you can dequeue it with <code class="code" id="i8e7rrj_7">MockServer.awaitWebSocketRequest()</code>:</p><div class="code-block" data-lang="kotlin">
+val requestBody = mockServer.awaitWebSocketRequest()
+</div><p id="i8e7rrj_9"><code class="code" id="i8e7rrj_10">responseBody</code> and <code class="code" id="i8e7rrj_11">requestBody</code> allow enqueuing server messages and dequeuing client responses respectively:</p><div class="code-block" data-lang="kotlin">
+val responseBody = mockServer.enqueueWebSocket()
+
+// Client code under test
+connectClient(mockServer.url)
+
+val requestBody = mockServer.awaitWebSocketRequest()
+
+responseBody.enqueueMessage(TextMessage(&quot;Hello from Server&quot;))
+
+// Client code under test
+sendClientMessage(&quot;Hello from client&quot;)
+
+requestBody.awaitMessage().apply {
+  assertIs&lt;TextMessage&gt;(this)
+  assertEquals(&quot;Hello from client&quot;, text)
+}
+</div></section><div class="last-modified">Last modified: 19 July 2024</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="recipes.html" class="navigation-links__prev">Recipes</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b267/app.js"></script></body></html>
