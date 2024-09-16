@@ -49,13 +49,16 @@ internal suspend fun readRequest(reader: Reader): MockRequestBase {
   }
 
   suspend fun readBytes(size: Long): Buffer {
+    var remaining = size
     val buffer2 = Buffer()
     while (buffer2.size < size) {
       if (reader.buffer.size == 0L) {
         reader.fillBuffer()
       }
 
-      buffer2.write(reader.buffer, minOf(size, reader.buffer.size))
+      val toRead = minOf(remaining, reader.buffer.size)
+      buffer2.write(reader.buffer, toRead)
+      remaining -= toRead
     }
 
     return buffer2
