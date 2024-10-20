@@ -41,9 +41,14 @@ interface TcpServer : Closeable {
 
   /**
    * Closes the server.
-   *
    */
   override fun close()
+
+  /**
+   * Check if the server is running.
+   * @return `true` if the server is listening for incoming connections, `false` otherwise.
+   */
+  fun isRunning(): Boolean
 }
 
 class Address(

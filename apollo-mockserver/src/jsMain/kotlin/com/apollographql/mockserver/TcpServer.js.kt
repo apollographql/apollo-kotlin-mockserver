@@ -14,6 +14,7 @@ import node.net.Socket as WrappedSocket
 
 internal class NodeTcpSocket(private val netSocket: WrappedSocket) : TcpSocket {
   private val readQueue = Channel<ByteArray>(Channel.UNLIMITED)
+
   init {
     netSocket.on(Event.DATA) { chunk ->
       val bytes = when (chunk) {
@@ -47,38 +48,46 @@ internal class NodeTcpSocket(private val netSocket: WrappedSocket) : TcpSocket {
 }
 
 internal class NodeTcpServer(private val port: Int) : TcpServer {
+
   private var server: WrappedServer? = null
   private var address: Address? = null
 
-
   override fun listen(block: (socket: TcpSocket) -> Unit) {
+    require(!isRunning()) { "Server is already running" }
+
     server = createServer { netSocket ->
       block(NodeTcpSocket(netSocket))
+    }.apply {
+      listen(port)
     }
-
-    server!!.listen(port)
   }
 
   override suspend fun address(): Address {
-    check(server != null) {
-      "You need to call start() before calling port()"
-    }
+    require(isRunning()) { "Server is not running, please call listen() before calling address()" }
 
     return address ?: suspendCoroutine { cont ->
-      server!!.on(Event.LISTENING) {
-        val address = server!!.address().unsafeCast<AddressInfo>()
+      server!!.once(Event.LISTENING) {
+        val server = requireNotNull(server) {
+          "close() was called during a call to address()"
+        }
 
-        this.address = Address(address.address, address.port.toInt())
-        cont.resume(this.address!!)
+        val address = server.address().unsafeCast<AddressInfo>()
+        this.address = Address(address.address, address.port.toInt()).also {
+          cont.resume(it)
+        }
       }
     }
   }
 
   override fun close() {
-    check(server != null) {
-      "server is not started"
+    server?.let {
+      it.close()
+      server = null
     }
-    server!!.close()
+  }
+
+  override fun isRunning(): Boolean {
+    return server != null
   }
 }
 

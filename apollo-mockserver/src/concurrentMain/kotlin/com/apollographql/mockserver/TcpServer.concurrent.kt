@@ -18,43 +18,34 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import okio.IOException
 import io.ktor.network.sockets.Socket as WrappedSocket
 
 actual fun TcpServer(port: Int): TcpServer = KtorTcpServer(port)
 
-class KtorTcpServer private constructor(
-  private val acceptDelayMillis: Int,
-  private val selectorManager: SelectorManager,
-  private val scope: CoroutineScope,
-  private val serverSocket: ServerSocket
+class KtorTcpServer(
+  val port: Int = 0,
+  private val acceptDelayMillis: Int = 0,
+  private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TcpServer {
 
-  companion object {
-    operator fun invoke(
-      port: Int = 0,
-      acceptDelayMillis: Int = 0,
-      dispatcher: CoroutineDispatcher = Dispatchers.IO
-    ): KtorTcpServer = runBlocking {
-      val selectorManager = SelectorManager(dispatcher)
-      val scope = CoroutineScope(SupervisorJob() + dispatcher)
-      val serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
-      KtorTcpServer(acceptDelayMillis, selectorManager, scope, serverSocket)
-    }
-  }
-
-  override fun close() {
-    scope.cancel()
-    selectorManager.close()
-    serverSocket.close()
-  }
+  private var selectorManager: SelectorManager? = null
+  private var serverScope: CoroutineScope? = null
+  private var serverSocket: ServerSocket? = null
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
-    scope.launch {
-      while (true) {
+    require(!isRunning()) { "Server is already running" }
+
+    val selectorManager = createSelectorManager().also { this.selectorManager = it }
+    val serverScope = createServerScope().also { this.serverScope = it }
+
+    serverScope.launch {
+      val serverSocket = createServerSocket(selectorManager).also { serverSocket = it }
+
+      while (isActive) {
         if (acceptDelayMillis > 0) {
           delay(acceptDelayMillis.toLong())
         }
@@ -68,9 +59,7 @@ class KtorTcpServer private constructor(
           continue
         }
 
-        val ktorSocket = KtorTcpSocket(socket)
-        block(ktorSocket)
-
+        val ktorSocket = KtorTcpSocket(socket).apply(block)
         launch {
           ktorSocket.loop()
         }
@@ -79,9 +68,15 @@ class KtorTcpServer private constructor(
   }
 
   override suspend fun address(): Address {
+    require(isRunning()) { "Server is not running, please call listen() before calling address()" }
+
     return withTimeout(1000) {
       var address: Address
       while (true) {
+        val serverSocket = requireNotNull(serverSocket) {
+          "close() was called during a call to address()"
+        }
+
         try {
           address = (serverSocket.localAddress as InetSocketAddress).let {
             Address(it.hostname, it.port)
@@ -95,6 +90,46 @@ class KtorTcpServer private constructor(
       address
     }
   }
+
+  override fun close() {
+    serverScope?.let {
+      it.cancel()
+      serverScope = null
+    }
+    selectorManager?.let {
+      it.close()
+      selectorManager = null
+    }
+    serverSocket?.let {
+      it.close()
+      serverSocket = null
+    }
+  }
+
+  override fun isRunning(): Boolean {
+    return serverSocket != null && serverScope?.isActive == true && selectorManager?.isActive == true
+  }
+
+  /**
+   * Creates a new [SelectorManager] instance using the provided [dispatcher].
+   * @return a new [SelectorManager] instance
+   */
+  private fun createSelectorManager(): SelectorManager = SelectorManager(dispatcher)
+
+  /**
+   * Creates a new [CoroutineScope] instance using the provided [dispatcher].
+   * [SupervisorJob] is used to ensure that the scope is not cancelled when a child job fails.
+   * @return a new [CoroutineScope] instance
+   */
+  private fun createServerScope(): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
+
+  /**
+   * Creates a new [ServerSocket] instance using the provided [selectorManager].
+   * Starts listening on the provided [port] and binds to localhost.
+   * @return a new [ServerSocket] instance
+   */
+  private suspend fun createServerSocket(selectorManager: SelectorManager): ServerSocket =
+    aSocket(selectorManager).tcp().bind("127.0.0.1", port)
 }
 
 internal class KtorTcpSocket(private val socket: WrappedSocket) : TcpSocket {

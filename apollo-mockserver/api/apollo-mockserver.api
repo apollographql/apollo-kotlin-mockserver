@@ -1,0 +1,194 @@
+public final class com/apollographql/mockserver/Address {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun getHostname ()Ljava/lang/String;
+	public final fun getPort ()I
+}
+
+public final class com/apollographql/mockserver/CloseFrame : com/apollographql/mockserver/WebSocketMessage {
+	public fun <init> (Ljava/lang/Integer;Ljava/lang/String;)V
+	public final fun getCode ()Ljava/lang/Integer;
+	public final fun getReason ()Ljava/lang/String;
+}
+
+public final class com/apollographql/mockserver/DataMessage : com/apollographql/mockserver/WebSocketMessage {
+	public fun <init> ([B)V
+	public final fun getData ()[B
+}
+
+public final class com/apollographql/mockserver/KtorTcpServer : com/apollographql/mockserver/TcpServer {
+	public fun <init> ()V
+	public fun <init> (IILkotlinx/coroutines/CoroutineDispatcher;)V
+	public synthetic fun <init> (IILkotlinx/coroutines/CoroutineDispatcher;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun address (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun close ()V
+	public final fun getPort ()I
+	public fun isRunning ()Z
+	public fun listen (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/apollographql/mockserver/MockRequest : com/apollographql/mockserver/MockRequestBase {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lokio/ByteString;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Lokio/ByteString;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBody ()Lokio/ByteString;
+	public fun getHeaders ()Ljava/util/Map;
+	public fun getMethod ()Ljava/lang/String;
+	public fun getPath ()Ljava/lang/String;
+	public fun getVersion ()Ljava/lang/String;
+}
+
+public abstract interface class com/apollographql/mockserver/MockRequestBase {
+	public abstract fun getHeaders ()Ljava/util/Map;
+	public abstract fun getMethod ()Ljava/lang/String;
+	public abstract fun getPath ()Ljava/lang/String;
+	public abstract fun getVersion ()Ljava/lang/String;
+}
+
+public final class com/apollographql/mockserver/MockRequestBaseKt {
+	public static final fun headerValueOf (Ljava/util/Map;Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class com/apollographql/mockserver/MockResponse {
+	public fun <init> (ILkotlinx/coroutines/flow/Flow;Ljava/util/Map;J)V
+	public synthetic fun <init> (ILkotlinx/coroutines/flow/Flow;Ljava/util/Map;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (ILkotlinx/coroutines/flow/Flow;Ljava/util/Map;JZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getBody ()Lkotlinx/coroutines/flow/Flow;
+	public final fun getDelayMillis ()J
+	public final fun getHeaders ()Ljava/util/Map;
+	public final fun getKeepAlive ()Z
+	public final fun getStatusCode ()I
+	public final fun newBuilder ()Lcom/apollographql/mockserver/MockResponse$Builder;
+}
+
+public final class com/apollographql/mockserver/MockResponse$Builder {
+	public fun <init> ()V
+	public final fun addHeader (Ljava/lang/String;Ljava/lang/String;)Lcom/apollographql/mockserver/MockResponse$Builder;
+	public final fun body (Ljava/lang/String;)Lcom/apollographql/mockserver/MockResponse$Builder;
+	public final fun body (Lkotlinx/coroutines/flow/Flow;)Lcom/apollographql/mockserver/MockResponse$Builder;
+	public final fun body (Lokio/ByteString;)Lcom/apollographql/mockserver/MockResponse$Builder;
+	public final fun build ()Lcom/apollographql/mockserver/MockResponse;
+	public final fun delayMillis (J)Lcom/apollographql/mockserver/MockResponse$Builder;
+	public final fun headers (Ljava/util/Map;)Lcom/apollographql/mockserver/MockResponse$Builder;
+	public final fun keepAlive (Z)Lcom/apollographql/mockserver/MockResponse$Builder;
+	public final fun statusCode (I)Lcom/apollographql/mockserver/MockResponse$Builder;
+}
+
+public abstract interface class com/apollographql/mockserver/MockServer : java/io/Closeable {
+	public abstract fun awaitAnyRequest-VtjQ1oo (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun close ()V
+	public abstract fun enqueue (Lcom/apollographql/mockserver/MockResponse;)V
+	public abstract fun port (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun stop (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun takeRequest ()Lcom/apollographql/mockserver/MockRequest;
+	public abstract fun url (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class com/apollographql/mockserver/MockServer$Builder {
+	public fun <init> ()V
+	public final fun build ()Lcom/apollographql/mockserver/MockServer;
+	public final fun handlePings (Z)Lcom/apollographql/mockserver/MockServer$Builder;
+	public final fun handler (Lcom/apollographql/mockserver/MockServerHandler;)Lcom/apollographql/mockserver/MockServer$Builder;
+	public final fun listener (Lcom/apollographql/mockserver/MockServer$Listener;)Lcom/apollographql/mockserver/MockServer$Builder;
+	public final fun port (I)Lcom/apollographql/mockserver/MockServer$Builder;
+	public final fun tcpServer (Lcom/apollographql/mockserver/TcpServer;)Lcom/apollographql/mockserver/MockServer$Builder;
+}
+
+public final class com/apollographql/mockserver/MockServer$DefaultImpls {
+	public static synthetic fun awaitAnyRequest-VtjQ1oo$default (Lcom/apollographql/mockserver/MockServer;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static fun stop (Lcom/apollographql/mockserver/MockServer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class com/apollographql/mockserver/MockServer$Listener {
+	public abstract fun onMessage (Lcom/apollographql/mockserver/WebSocketMessage;)V
+	public abstract fun onRequest (Lcom/apollographql/mockserver/MockRequestBase;)V
+}
+
+public abstract interface class com/apollographql/mockserver/MockServerHandler {
+	public abstract fun handle (Lcom/apollographql/mockserver/MockRequestBase;)Lcom/apollographql/mockserver/MockResponse;
+}
+
+public final class com/apollographql/mockserver/MockServerKt {
+	public static final fun MockServer ()Lcom/apollographql/mockserver/MockServer;
+	public static final fun MockServer (Lcom/apollographql/mockserver/MockServerHandler;)Lcom/apollographql/mockserver/MockServer;
+	public static final fun assertNoRequest (Lcom/apollographql/mockserver/MockServer;)V
+	public static final fun awaitRequest-8Mi8wO0 (Lcom/apollographql/mockserver/MockServer;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun awaitRequest-8Mi8wO0$default (Lcom/apollographql/mockserver/MockServer;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun awaitWebSocketRequest-8Mi8wO0 (Lcom/apollographql/mockserver/MockServer;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun awaitWebSocketRequest-8Mi8wO0$default (Lcom/apollographql/mockserver/MockServer;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun enqueue (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;JI)V
+	public static synthetic fun enqueue$default (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;JIILjava/lang/Object;)V
+	public static final fun enqueueError (Lcom/apollographql/mockserver/MockServer;I)V
+	public static final fun enqueueGraphQLString (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;J)V
+	public static synthetic fun enqueueGraphQLString$default (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;JILjava/lang/Object;)V
+	public static final fun enqueueMultipart (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;)Lcom/apollographql/mockserver/MultipartBody;
+	public static final fun enqueueMultipart (Lcom/apollographql/mockserver/MockServer;Ljava/util/List;)Ljava/lang/Void;
+	public static synthetic fun enqueueMultipart$default (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;ILjava/lang/Object;)Lcom/apollographql/mockserver/MultipartBody;
+	public static final fun enqueueString (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;JILjava/lang/String;)V
+	public static synthetic fun enqueueString$default (Lcom/apollographql/mockserver/MockServer;Ljava/lang/String;JILjava/lang/String;ILjava/lang/Object;)V
+	public static final fun enqueueStrings (Lcom/apollographql/mockserver/MultipartBody;Ljava/util/List;JJ)V
+	public static synthetic fun enqueueStrings$default (Lcom/apollographql/mockserver/MultipartBody;Ljava/util/List;JJILjava/lang/Object;)V
+	public static final fun enqueueWebSocket (Lcom/apollographql/mockserver/MockServer;ILjava/util/Map;Z)Lcom/apollographql/mockserver/WebSocketBody;
+	public static synthetic fun enqueueWebSocket$default (Lcom/apollographql/mockserver/MockServer;ILjava/util/Map;ZILjava/lang/Object;)Lcom/apollographql/mockserver/WebSocketBody;
+}
+
+public abstract interface class com/apollographql/mockserver/MultipartBody {
+	public abstract fun enqueueDelay (J)V
+	public abstract fun enqueuePart (Lokio/ByteString;Z)V
+}
+
+public final class com/apollographql/mockserver/PingFrame : com/apollographql/mockserver/WebSocketMessage {
+	public static final field INSTANCE Lcom/apollographql/mockserver/PingFrame;
+}
+
+public final class com/apollographql/mockserver/PongFrame : com/apollographql/mockserver/WebSocketMessage {
+	public static final field INSTANCE Lcom/apollographql/mockserver/PongFrame;
+}
+
+public abstract interface class com/apollographql/mockserver/TcpServer : java/io/Closeable {
+	public abstract fun address (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun close ()V
+	public abstract fun isRunning ()Z
+	public abstract fun listen (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/apollographql/mockserver/TcpServer_concurrentKt {
+	public static final fun TcpServer (I)Lcom/apollographql/mockserver/TcpServer;
+}
+
+public abstract interface class com/apollographql/mockserver/TcpSocket : java/io/Closeable {
+	public abstract fun close ()V
+	public abstract fun receive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun send ([B)V
+}
+
+public final class com/apollographql/mockserver/TextMessage : com/apollographql/mockserver/WebSocketMessage {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun getText ()Ljava/lang/String;
+}
+
+public final class com/apollographql/mockserver/VersionKt {
+	public static final field VERSION Ljava/lang/String;
+}
+
+public abstract interface class com/apollographql/mockserver/WebSocketBody {
+	public abstract fun close ()V
+	public abstract fun enqueueMessage (Lcom/apollographql/mockserver/WebSocketMessage;)V
+}
+
+public abstract interface class com/apollographql/mockserver/WebSocketMessage {
+}
+
+public final class com/apollographql/mockserver/WebsocketMockRequest : com/apollographql/mockserver/MockRequestBase {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun awaitClose-VtjQ1oo (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun awaitClose-VtjQ1oo$default (Lcom/apollographql/mockserver/WebsocketMockRequest;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun awaitMessage-VtjQ1oo (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun awaitMessage-VtjQ1oo$default (Lcom/apollographql/mockserver/WebsocketMockRequest;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun awaitMessageOrClose-XOUi-xU (JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun awaitMessageOrClose-XOUi-xU$default (Lcom/apollographql/mockserver/WebsocketMockRequest;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public fun getHeaders ()Ljava/util/Map;
+	public fun getMethod ()Ljava/lang/String;
+	public fun getPath ()Ljava/lang/String;
+	public fun getVersion ()Ljava/lang/String;
+}
+
