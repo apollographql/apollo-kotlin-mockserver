@@ -53,7 +53,7 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
   private var address: Address? = null
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
-    require(!isRunning()) { "Server is already running" }
+    require(server == null) { "Server is already listening" }
 
     server = createServer { netSocket ->
       block(NodeTcpSocket(netSocket))
@@ -63,14 +63,11 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
   }
 
   override suspend fun address(): Address {
-    require(isRunning()) { "Server is not running, please call listen() before calling address()" }
+    requireNotNull(server) { "Server is not listening, please call listen() before calling address()" }
 
+    val server = server!!
     return address ?: suspendCoroutine { cont ->
-      server!!.once(Event.LISTENING) {
-        val server = requireNotNull(server) {
-          "close() was called during a call to address()"
-        }
-
+      server.once(Event.LISTENING) {
         val address = server.address().unsafeCast<AddressInfo>()
         this.address = Address(address.address, address.port.toInt()).also {
           cont.resume(it)
@@ -83,12 +80,8 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
     server?.let {
       it.close()
       server = null
+      address = null
     }
-    address = null
-  }
-
-  override fun isRunning(): Boolean {
-    return server != null
   }
 }
 

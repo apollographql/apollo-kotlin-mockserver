@@ -21,7 +21,6 @@ public final class com/apollographql/mockserver/KtorTcpServer : com/apollographq
 	public synthetic fun <init> (IILkotlinx/coroutines/CoroutineDispatcher;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun address (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun close ()V
-	public fun isRunning ()Z
 	public fun listen (Lkotlin/jvm/functions/Function1;)V
 }
 
@@ -145,7 +144,6 @@ public final class com/apollographql/mockserver/PongFrame : com/apollographql/mo
 public abstract interface class com/apollographql/mockserver/TcpServer : java/io/Closeable {
 	public abstract fun address (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun close ()V
-	public abstract fun isRunning ()Z
 	public abstract fun listen (Lkotlin/jvm/functions/Function1;)V
 }
 

@@ -11,6 +11,7 @@ import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
@@ -32,25 +33,22 @@ class KtorTcpServer(
   private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TcpServer {
 
-  private var selectorManager: SelectorManager? = null
-  private var serverScope: CoroutineScope? = null
+  private val selectorManager = SelectorManager(dispatcher)
+  private val serverScope = CoroutineScope(SupervisorJob() + dispatcher)
   private var serverSocket: ServerSocket? = null
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
-    require(!isRunning()) { "Server is already running" }
+    require(serverSocket == null) { "Server is already listening" }
 
-    val selectorManager = createSelectorManager().also { this.selectorManager = it }
-    val serverScope = createServerScope().also { this.serverScope = it }
-
-    serverScope.launch {
-      val serverSocket = createServerSocket(selectorManager).also { serverSocket = it }
+    serverScope.launch(start = CoroutineStart.UNDISPATCHED) {
+      serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
 
       while (isActive) {
         if (acceptDelayMillis > 0) {
           delay(acceptDelayMillis.toLong())
         }
         val socket: WrappedSocket = try {
-          serverSocket.accept()
+          serverSocket!!.accept()
         } catch (t: Throwable) {
           if (t is CancellationException) {
             throw t
@@ -68,7 +66,9 @@ class KtorTcpServer(
   }
 
   override suspend fun address(): Address {
-    require(isRunning()) { "Server is not running, please call listen() before calling address()" }
+    requireNotNull(serverSocket) {
+      "Server is not listening, please call listen() before calling address()"
+    }
 
     return withTimeout(1000) {
       var address: Address
@@ -92,44 +92,13 @@ class KtorTcpServer(
   }
 
   override fun close() {
-    serverScope?.let {
-      it.cancel()
-      serverScope = null
-    }
-    selectorManager?.let {
-      it.close()
-      selectorManager = null
-    }
-    serverSocket?.let {
-      it.close()
+    if (serverSocket != null) {
+      serverScope.cancel()
+      selectorManager.close()
+      serverSocket!!.close()
       serverSocket = null
     }
   }
-
-  override fun isRunning(): Boolean {
-    return serverSocket != null && serverScope?.isActive == true && selectorManager?.isActive == true
-  }
-
-  /**
-   * Creates a new [SelectorManager] instance using the provided [dispatcher].
-   * @return a new [SelectorManager] instance
-   */
-  private fun createSelectorManager(): SelectorManager = SelectorManager(dispatcher)
-
-  /**
-   * Creates a new [CoroutineScope] instance using the provided [dispatcher].
-   * [SupervisorJob] is used to ensure that the scope is not cancelled when a child job fails.
-   * @return a new [CoroutineScope] instance
-   */
-  private fun createServerScope(): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
-
-  /**
-   * Creates a new [ServerSocket] instance using the provided [selectorManager].
-   * Starts listening on the provided [port] and binds to localhost.
-   * @return a new [ServerSocket] instance
-   */
-  private suspend fun createServerSocket(selectorManager: SelectorManager): ServerSocket =
-    aSocket(selectorManager).tcp().bind("127.0.0.1", port)
 }
 
 internal class KtorTcpSocket(private val socket: WrappedSocket) : TcpSocket {

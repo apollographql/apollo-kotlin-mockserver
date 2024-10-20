@@ -28,9 +28,14 @@ interface TcpSocket: Closeable {
   override fun close()
 }
 
+/**
+ * A server that handles [TcpSocket]
+ * [TcpServer] is not thread safe and its method must be called from the same coroutine.
+ */
 interface TcpServer : Closeable {
   /**
-   * Starts listening and calls [block] when on incoming connections
+   * Starts a background coroutine that calls [block] on incoming connections.
+   * [listen] can only be called once.
    */
   fun listen(block: (socket: TcpSocket) -> Unit)
 
@@ -41,14 +46,9 @@ interface TcpServer : Closeable {
 
   /**
    * Closes the server.
+   * [close] is idempotent.
    */
   override fun close()
-
-  /**
-   * Check if the server is running.
-   * @return `true` if the server is listening for incoming connections, `false` otherwise.
-   */
-  fun isRunning(): Boolean
 }
 
 class Address(

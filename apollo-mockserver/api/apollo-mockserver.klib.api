@@ -1,5 +1,6 @@
 // Klib ABI Dump
 // Targets: [iosArm64, iosSimulatorArm64, iosX64, js, macosArm64, macosX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, watchosArm32, watchosArm64, watchosSimulatorArm64]
+// Alias: apple => [iosArm64, iosSimulatorArm64, iosX64, macosArm64, macosX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosSimulatorArm64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -47,7 +48,6 @@ abstract interface com.apollographql.mockserver/MultipartBody { // com.apollogra
 }
 abstract interface com.apollographql.mockserver/TcpServer : okio/Closeable { // com.apollographql.mockserver/TcpServer|null[0]
     abstract fun close() // com.apollographql.mockserver/TcpServer.close|close(){}[0]
-    abstract fun isRunning(): kotlin/Boolean // com.apollographql.mockserver/TcpServer.isRunning|isRunning(){}[0]
     abstract fun listen(kotlin/Function1<com.apollographql.mockserver/TcpSocket, kotlin/Unit>) // com.apollographql.mockserver/TcpServer.listen|listen(kotlin.Function1<com.apollographql.mockserver.TcpSocket,kotlin.Unit>){}[0]
     abstract suspend fun address(): com.apollographql.mockserver/Address // com.apollographql.mockserver/TcpServer.address|address(){}[0]
 }
@@ -157,3 +157,10 @@ final object com.apollographql.mockserver/PongFrame : com.apollographql.mockserv
 final suspend fun (com.apollographql.mockserver/MockServer).com.apollographql.mockserver/awaitRequest(kotlin.time/Duration = ...): com.apollographql.mockserver/MockRequest // com.apollographql.mockserver/awaitRequest|awaitRequest@com.apollographql.mockserver.MockServer(kotlin.time.Duration){}[0]
 final suspend fun (com.apollographql.mockserver/MockServer).com.apollographql.mockserver/awaitWebSocketRequest(kotlin.time/Duration = ...): com.apollographql.mockserver/WebsocketMockRequest // com.apollographql.mockserver/awaitWebSocketRequest|awaitWebSocketRequest@com.apollographql.mockserver.MockServer(kotlin.time.Duration){}[0]
 sealed interface com.apollographql.mockserver/WebSocketMessage // com.apollographql.mockserver/WebSocketMessage|null[0]
+// Targets: [apple]
+final class com.apollographql.mockserver/KtorTcpServer : com.apollographql.mockserver/TcpServer { // com.apollographql.mockserver/KtorTcpServer|null[0]
+    constructor <init>(kotlin/Int = ..., kotlin/Int = ..., kotlinx.coroutines/CoroutineDispatcher = ...) // com.apollographql.mockserver/KtorTcpServer.<init>|<init>(kotlin.Int;kotlin.Int;kotlinx.coroutines.CoroutineDispatcher){}[0]
+    final fun close() // com.apollographql.mockserver/KtorTcpServer.close|close(){}[0]
+    final fun listen(kotlin/Function1<com.apollographql.mockserver/TcpSocket, kotlin/Unit>) // com.apollographql.mockserver/KtorTcpServer.listen|listen(kotlin.Function1<com.apollographql.mockserver.TcpSocket,kotlin.Unit>){}[0]
+    final suspend fun address(): com.apollographql.mockserver/Address // com.apollographql.mockserver/KtorTcpServer.address|address(){}[0]
+}
