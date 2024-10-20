@@ -84,6 +84,7 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
       it.close()
       server = null
     }
+    address = null
   }
 
   override fun isRunning(): Boolean {
