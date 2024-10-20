@@ -2,12 +2,16 @@ package com.apollographql.mockserver
 
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
@@ -15,6 +19,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import okio.IOException
@@ -22,35 +27,38 @@ import io.ktor.network.sockets.Socket as WrappedSocket
 
 actual fun TcpServer(port: Int): TcpServer = KtorTcpServer(port)
 
-class KtorTcpServer(port: Int = 0, private val acceptDelayMillis: Int = 0, dispatcher: CoroutineDispatcher = Dispatchers.IO) : TcpServer {
+class KtorTcpServer(
+  private val port: Int = 0,
+  private val acceptDelayMillis: Int = 0,
+  dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : TcpServer {
+
   private val selectorManager = SelectorManager(dispatcher)
-  private val scope = CoroutineScope(SupervisorJob() + dispatcher)
-  private val serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
-
-
-  override fun close() {
-    scope.cancel()
-    selectorManager.close()
-    serverSocket.close()
-  }
+  private val serverScope = CoroutineScope(SupervisorJob() + dispatcher)
+  private var serverSocket: ServerSocket? = null
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
-    scope.launch {
-      while (true) {
+    require(serverScope.isActive) { "Server is closed and cannot be restarted" }
+    require(serverSocket == null) { "Server is already started" }
+
+    serverScope.launch(start = CoroutineStart.UNDISPATCHED) {
+      serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
+
+      while (isActive) {
         if (acceptDelayMillis > 0) {
           delay(acceptDelayMillis.toLong())
         }
         val socket: WrappedSocket = try {
-          serverSocket.accept()
+          serverSocket!!.accept()
         } catch (t: Throwable) {
-          if (t is CancellationException) { throw t }
+          if (t is CancellationException) {
+            throw t
+          }
           delay(1000)
           continue
         }
 
-        val ktorSocket = KtorTcpSocket(socket)
-        block(ktorSocket)
-
+        val ktorSocket = KtorTcpSocket(socket).apply(block)
         launch {
           ktorSocket.loop()
         }
@@ -59,20 +67,38 @@ class KtorTcpServer(port: Int = 0, private val acceptDelayMillis: Int = 0, dispa
   }
 
   override suspend fun address(): Address {
+    require(serverScope.isActive) { "Server is closed" }
+    requireNotNull(serverSocket) { "Server is not listening, please call listen() before calling address()" }
+
     return withTimeout(1000) {
-      var address: Address
-      while(true) {
+      var address: Address? = null
+      while (address == null) {
+        val serverSocket = requireNotNull(serverSocket) {
+          "close() was called during a call to address()"
+        }
+
         try {
           address = (serverSocket.localAddress as InetSocketAddress).let {
             Address(it.hostname, it.port)
           }
-          break
-        } catch (e: Exception) {
+        } catch (_: Exception) {
           delay(50)
           continue
         }
       }
       address
+    }
+  }
+
+  override fun close() {
+    serverSocket?.let { serverSocket ->
+      // Cancel the server scope only if the server was started before
+      // If the server was not started, the scope keeps being active and server can be started for the first time
+      // Otherwise, the scope is cancelled to prevent the server from being started again
+      serverScope.cancel()
+      selectorManager.close()
+      serverSocket.close()
+      this.serverSocket = null
     }
   }
 }

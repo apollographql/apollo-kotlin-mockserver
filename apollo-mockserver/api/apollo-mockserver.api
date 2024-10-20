@@ -162,6 +162,10 @@ public final class com/apollographql/mockserver/TextMessage : com/apollographql/
 	public final fun getText ()Ljava/lang/String;
 }
 
+public final class com/apollographql/mockserver/VersionKt {
+	public static final field VERSION Ljava/lang/String;
+}
+
 public abstract interface class com/apollographql/mockserver/WebSocketBody {
 	public abstract fun close ()V
 	public abstract fun enqueueMessage (Lcom/apollographql/mockserver/WebSocketMessage;)V

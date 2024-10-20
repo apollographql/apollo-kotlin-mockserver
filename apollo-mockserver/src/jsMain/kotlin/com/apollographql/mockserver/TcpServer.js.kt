@@ -6,6 +6,7 @@ import node.buffer.Buffer
 import node.events.Event
 import node.net.AddressInfo
 import node.net.createServer
+import node.test.it
 import okio.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -14,6 +15,7 @@ import node.net.Socket as WrappedSocket
 
 internal class NodeTcpSocket(private val netSocket: WrappedSocket) : TcpSocket {
   private val readQueue = Channel<ByteArray>(Channel.UNLIMITED)
+
   init {
     netSocket.on(Event.DATA) { chunk ->
       val bytes = when (chunk) {
@@ -47,38 +49,48 @@ internal class NodeTcpSocket(private val netSocket: WrappedSocket) : TcpSocket {
 }
 
 internal class NodeTcpServer(private val port: Int) : TcpServer {
+
   private var server: WrappedServer? = null
   private var address: Address? = null
-
+  private var isClosed = false
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
+    require(!isClosed) { "Server is closed and cannot be restarted" }
+    require(server == null) { "Server is already started" }
+
     server = createServer { netSocket ->
       block(NodeTcpSocket(netSocket))
+    }.apply {
+      listen(port)
     }
-
-    server!!.listen(port)
   }
 
   override suspend fun address(): Address {
-    check(server != null) {
-      "You need to call start() before calling port()"
-    }
+    require(!isClosed) { "Server is closed" }
+    val server = requireNotNull(this.server) { "Server is not listening, please call listen() before calling address()" }
 
     return address ?: suspendCoroutine { cont ->
-      server!!.on(Event.LISTENING) {
-        val address = server!!.address().unsafeCast<AddressInfo>()
-
-        this.address = Address(address.address, address.port.toInt())
-        cont.resume(this.address!!)
+      server.once(Event.LISTENING) {
+        val server = requireNotNull(this.server) {
+          "close() was called during a call to address()"
+        }
+        val address = server.address().unsafeCast<AddressInfo>()
+        this.address = Address(address.address, address.port.toInt()).also {
+          cont.resume(it)
+        }
       }
     }
   }
 
   override fun close() {
-    check(server != null) {
-      "server is not started"
+    if(isClosed) return
+
+    server?.let { server ->
+      server.close()
+      this.server = null
+      // Is closed only if the server was started before
+      isClosed = true
     }
-    server!!.close()
   }
 }
 

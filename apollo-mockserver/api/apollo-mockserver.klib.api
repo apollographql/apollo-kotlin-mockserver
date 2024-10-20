@@ -6,7 +6,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <apollo-kotlin-mockserver:mockserver>
+// Library unique name: <com.apollographql.mockserver:apollo-mockserver>
 abstract interface com.apollographql.mockserver/MockRequestBase { // com.apollographql.mockserver/MockRequestBase|null[0]
     abstract val headers // com.apollographql.mockserver/MockRequestBase.headers|{}headers[0]
         abstract fun <get-headers>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.apollographql.mockserver/MockRequestBase.headers.<get-headers>|<get-headers>(){}[0]
@@ -137,6 +137,8 @@ final class com.apollographql.mockserver/WebsocketMockRequest : com.apollographq
     final val version // com.apollographql.mockserver/WebsocketMockRequest.version|{}version[0]
         final fun <get-version>(): kotlin/String // com.apollographql.mockserver/WebsocketMockRequest.version.<get-version>|<get-version>(){}[0]
 }
+final const val com.apollographql.mockserver/VERSION // com.apollographql.mockserver/VERSION|{}VERSION[0]
+    final fun <get-VERSION>(): kotlin/String // com.apollographql.mockserver/VERSION.<get-VERSION>|<get-VERSION>(){}[0]
 final fun (com.apollographql.mockserver/MockServer).com.apollographql.mockserver/assertNoRequest() // com.apollographql.mockserver/assertNoRequest|assertNoRequest@com.apollographql.mockserver.MockServer(){}[0]
 final fun (com.apollographql.mockserver/MockServer).com.apollographql.mockserver/enqueue(kotlin/String = ..., kotlin/Long = ..., kotlin/Int = ...) // com.apollographql.mockserver/enqueue|enqueue@com.apollographql.mockserver.MockServer(kotlin.String;kotlin.Long;kotlin.Int){}[0]
 final fun (com.apollographql.mockserver/MockServer).com.apollographql.mockserver/enqueueError(kotlin/Int) // com.apollographql.mockserver/enqueueError|enqueueError@com.apollographql.mockserver.MockServer(kotlin.Int){}[0]
