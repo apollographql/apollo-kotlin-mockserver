@@ -27,7 +27,7 @@ import io.ktor.network.sockets.Socket as WrappedSocket
 actual fun TcpServer(port: Int): TcpServer = KtorTcpServer(port)
 
 class KtorTcpServer(
-  val port: Int = 0,
+  private val port: Int = 0,
   private val acceptDelayMillis: Int = 0,
   private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TcpServer {
