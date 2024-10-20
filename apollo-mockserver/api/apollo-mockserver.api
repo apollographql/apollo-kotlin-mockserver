@@ -21,7 +21,7 @@ public final class com/apollographql/mockserver/KtorTcpServer : com/apollographq
 	public synthetic fun <init> (IILkotlinx/coroutines/CoroutineDispatcher;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun address (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun close ()V
-	public fun listen (Lkotlin/jvm/functions/Function1;)V
+	public fun listen (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/apollographql/mockserver/MockRequest : com/apollographql/mockserver/MockRequestBase {
@@ -82,7 +82,7 @@ public abstract interface class com/apollographql/mockserver/MockServer : java/i
 
 public final class com/apollographql/mockserver/MockServer$Builder {
 	public fun <init> ()V
-	public final fun build ()Lcom/apollographql/mockserver/MockServer;
+	public final fun build (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun handlePings (Z)Lcom/apollographql/mockserver/MockServer$Builder;
 	public final fun handler (Lcom/apollographql/mockserver/MockServerHandler;)Lcom/apollographql/mockserver/MockServer$Builder;
 	public final fun listener (Lcom/apollographql/mockserver/MockServer$Listener;)Lcom/apollographql/mockserver/MockServer$Builder;
@@ -105,8 +105,8 @@ public abstract interface class com/apollographql/mockserver/MockServerHandler {
 }
 
 public final class com/apollographql/mockserver/MockServerKt {
-	public static final fun MockServer ()Lcom/apollographql/mockserver/MockServer;
 	public static final fun MockServer (Lcom/apollographql/mockserver/MockServerHandler;)Lcom/apollographql/mockserver/MockServer;
+	public static final fun MockServer (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun assertNoRequest (Lcom/apollographql/mockserver/MockServer;)V
 	public static final fun awaitRequest-8Mi8wO0 (Lcom/apollographql/mockserver/MockServer;JLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun awaitRequest-8Mi8wO0$default (Lcom/apollographql/mockserver/MockServer;JLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
@@ -144,7 +144,7 @@ public final class com/apollographql/mockserver/PongFrame : com/apollographql/mo
 public abstract interface class com/apollographql/mockserver/TcpServer : java/io/Closeable {
 	public abstract fun address (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun close ()V
-	public abstract fun listen (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun listen (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/apollographql/mockserver/TcpServer_concurrentKt {

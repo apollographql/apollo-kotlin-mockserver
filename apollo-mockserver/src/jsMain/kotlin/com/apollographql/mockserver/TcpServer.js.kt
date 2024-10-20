@@ -54,7 +54,7 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
   private var address: Address? = null
   private var isClosed = false
 
-  override fun listen(block: (socket: TcpSocket) -> Unit) {
+  override suspend fun listen(block: (socket: TcpSocket) -> Unit) {
     require(!isClosed) { "Server is closed and cannot be restarted" }
     require(server == null) { "Server is already started" }
 

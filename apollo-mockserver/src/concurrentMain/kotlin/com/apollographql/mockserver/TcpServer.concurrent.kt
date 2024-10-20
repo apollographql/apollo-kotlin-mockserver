@@ -37,13 +37,13 @@ class KtorTcpServer(
   private val serverScope = CoroutineScope(SupervisorJob() + dispatcher)
   private var serverSocket: ServerSocket? = null
 
-  override fun listen(block: (socket: TcpSocket) -> Unit) {
+  override suspend fun listen(block: (socket: TcpSocket) -> Unit) {
     require(serverScope.isActive) { "Server is closed and cannot be restarted" }
     require(serverSocket == null) { "Server is already started" }
 
-    serverScope.launch(start = CoroutineStart.UNDISPATCHED) {
-      serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
+    serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
 
+    serverScope.launch {
       while (isActive) {
         if (acceptDelayMillis > 0) {
           delay(acceptDelayMillis.toLong())

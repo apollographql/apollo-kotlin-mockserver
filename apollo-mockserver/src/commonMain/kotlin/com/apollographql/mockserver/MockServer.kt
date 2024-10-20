@@ -107,17 +107,20 @@ interface MockServer : Closeable {
       this.listener = listener
     }
 
-    fun build(): MockServer {
+    suspend fun build(): MockServer {
       check(tcpServer == null || port == null) {
         "It is an error to set both tcpServer and port"
       }
       val server = tcpServer ?: TcpServer(port ?: 0)
-      return MockServerImpl(
+      val mockServer = MockServerImpl(
           handler ?: QueueMockServerHandler(),
           handlePings ?: true,
           server,
           listener
       )
+
+      mockServer.start()
+      return mockServer
     }
   }
 }
@@ -131,7 +134,7 @@ internal class MockServerImpl(
   private val requests = Channel<MockRequestBase>(Channel.UNLIMITED)
   private val scope = CoroutineScope(SupervisorJob())
 
-  init {
+  suspend fun start() {
     server.listen(::onSocket)
   }
 
@@ -264,24 +267,23 @@ internal class MockServerImpl(
 }
 
 @JsName("createMockServer")
-fun MockServer(): MockServer = MockServerImpl(
+suspend fun MockServer(): MockServer {
+  val mockServer = MockServerImpl(
     QueueMockServerHandler(),
     true,
     TcpServer(0),
     null
-)
+  )
+  mockServer.start()
+
+  return mockServer
+}
 
 @Deprecated("Use MockServer.Builder() instead", level = DeprecationLevel.ERROR)
-fun MockServer(handler: MockServerHandler): MockServer =
-  MockServerImpl(
-      handler,
-      true,
-      TcpServer(0),
-      null
-  )
+fun MockServer(handler: MockServerHandler): MockServer = TODO()
 
 @Deprecated("Use enqueueString instead", ReplaceWith("enqueueString(string = string, delayMs = delayMs, statusCode = statusCode)"), DeprecationLevel.ERROR)
-fun MockServer.enqueue(string: String = "", delayMs: Long = 0, statusCode: Int = 200) = enqueueString(string, delayMs, statusCode)
+fun MockServer.enqueue(string: String = "", delayMs: Long = 0, statusCode: Int = 200): Unit = TODO()
 
 fun MockServer.enqueueString(string: String = "", delayMs: Long = 0, statusCode: Int = 200, contentType: String = "text/plain") {
   enqueue(MockResponse.Builder()
