@@ -6,6 +6,7 @@ import node.buffer.Buffer
 import node.events.Event
 import node.net.AddressInfo
 import node.net.createServer
+import node.test.it
 import okio.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -51,9 +52,11 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
 
   private var server: WrappedServer? = null
   private var address: Address? = null
+  private var isClosed = false
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
-    require(server == null) { "Server is already listening" }
+    require(!isClosed) { "Server is closed and cannot be restarted" }
+    require(server == null) { "Server is already started" }
 
     server = createServer { netSocket ->
       block(NodeTcpSocket(netSocket))
@@ -63,11 +66,14 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
   }
 
   override suspend fun address(): Address {
-    requireNotNull(server) { "Server is not listening, please call listen() before calling address()" }
+    require(!isClosed) { "Server is closed" }
+    val server = requireNotNull(this.server) { "Server is not listening, please call listen() before calling address()" }
 
-    val server = server!!
     return address ?: suspendCoroutine { cont ->
       server.once(Event.LISTENING) {
+        val server = requireNotNull(this.server) {
+          "close() was called during a call to address()"
+        }
         val address = server.address().unsafeCast<AddressInfo>()
         this.address = Address(address.address, address.port.toInt()).also {
           cont.resume(it)
@@ -77,10 +83,13 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
   }
 
   override fun close() {
-    server?.let {
-      it.close()
-      server = null
-      address = null
+    if(isClosed) return
+
+    server?.let { server ->
+      server.close()
+      this.server = null
+      // Is closed only if the server was started before
+      isClosed = true
     }
   }
 }

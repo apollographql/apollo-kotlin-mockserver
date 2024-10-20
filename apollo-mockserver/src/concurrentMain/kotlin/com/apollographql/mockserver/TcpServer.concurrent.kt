@@ -30,7 +30,7 @@ actual fun TcpServer(port: Int): TcpServer = KtorTcpServer(port)
 class KtorTcpServer(
   private val port: Int = 0,
   private val acceptDelayMillis: Int = 0,
-  private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+  dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TcpServer {
 
   private val selectorManager = SelectorManager(dispatcher)
@@ -38,7 +38,8 @@ class KtorTcpServer(
   private var serverSocket: ServerSocket? = null
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
-    require(serverSocket == null) { "Server is already listening" }
+    require(serverScope.isActive) { "Server is closed and cannot be restarted" }
+    require(serverSocket == null) { "Server is already started" }
 
     serverScope.launch(start = CoroutineStart.UNDISPATCHED) {
       serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
@@ -66,13 +67,12 @@ class KtorTcpServer(
   }
 
   override suspend fun address(): Address {
-    requireNotNull(serverSocket) {
-      "Server is not listening, please call listen() before calling address()"
-    }
+    require(serverScope.isActive) { "Server is closed" }
+    requireNotNull(serverSocket) { "Server is not listening, please call listen() before calling address()" }
 
     return withTimeout(1000) {
-      var address: Address
-      while (true) {
+      var address: Address? = null
+      while (address == null) {
         val serverSocket = requireNotNull(serverSocket) {
           "close() was called during a call to address()"
         }
@@ -81,8 +81,7 @@ class KtorTcpServer(
           address = (serverSocket.localAddress as InetSocketAddress).let {
             Address(it.hostname, it.port)
           }
-          break
-        } catch (e: Exception) {
+        } catch (_: Exception) {
           delay(50)
           continue
         }
@@ -92,11 +91,14 @@ class KtorTcpServer(
   }
 
   override fun close() {
-    if (serverSocket != null) {
+    serverSocket?.let { serverSocket ->
+      // Cancel the server scope only if the server was started before
+      // If the server was not started, the scope keeps being active and server can be started for the first time
+      // Otherwise, the scope is cancelled to prevent the server from being started again
       serverScope.cancel()
       selectorManager.close()
-      serverSocket!!.close()
-      serverSocket = null
+      serverSocket.close()
+      this.serverSocket = null
     }
   }
 }
