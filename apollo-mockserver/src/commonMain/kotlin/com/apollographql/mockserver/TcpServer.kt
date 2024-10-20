@@ -37,7 +37,7 @@ interface TcpServer : Closeable {
    * Starts a background coroutine that calls [block] on incoming connections.
    * [listen] can only be called once.
    */
-  fun listen(block: (socket: TcpSocket) -> Unit)
+  suspend fun listen(block: (socket: TcpSocket) -> Unit)
 
   /**
    * Returns the local address the server is bound to. Only valid after calling [listen]
