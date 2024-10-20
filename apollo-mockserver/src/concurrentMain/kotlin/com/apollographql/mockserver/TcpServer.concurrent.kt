@@ -2,9 +2,12 @@ package com.apollographql.mockserver
 
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.InetSocketAddress
+import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import io.ktor.utils.io.readAvailable
+import io.ktor.utils.io.writeFully
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -16,17 +19,32 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import okio.IOException
 import io.ktor.network.sockets.Socket as WrappedSocket
 
 actual fun TcpServer(port: Int): TcpServer = KtorTcpServer(port)
 
-class KtorTcpServer(port: Int = 0, private val acceptDelayMillis: Int = 0, dispatcher: CoroutineDispatcher = Dispatchers.IO) : TcpServer {
-  private val selectorManager = SelectorManager(dispatcher)
-  private val scope = CoroutineScope(SupervisorJob() + dispatcher)
-  private val serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
+class KtorTcpServer private constructor(
+  private val acceptDelayMillis: Int,
+  private val selectorManager: SelectorManager,
+  private val scope: CoroutineScope,
+  private val serverSocket: ServerSocket
+) : TcpServer {
 
+  companion object {
+    operator fun invoke(
+      port: Int = 0,
+      acceptDelayMillis: Int = 0,
+      dispatcher: CoroutineDispatcher = Dispatchers.IO
+    ): KtorTcpServer = runBlocking {
+      val selectorManager = SelectorManager(dispatcher)
+      val scope = CoroutineScope(SupervisorJob() + dispatcher)
+      val serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
+      KtorTcpServer(acceptDelayMillis, selectorManager, scope, serverSocket)
+    }
+  }
 
   override fun close() {
     scope.cancel()
@@ -43,7 +61,9 @@ class KtorTcpServer(port: Int = 0, private val acceptDelayMillis: Int = 0, dispa
         val socket: WrappedSocket = try {
           serverSocket.accept()
         } catch (t: Throwable) {
-          if (t is CancellationException) { throw t }
+          if (t is CancellationException) {
+            throw t
+          }
           delay(1000)
           continue
         }
@@ -61,7 +81,7 @@ class KtorTcpServer(port: Int = 0, private val acceptDelayMillis: Int = 0, dispa
   override suspend fun address(): Address {
     return withTimeout(1000) {
       var address: Address
-      while(true) {
+      while (true) {
         try {
           address = (serverSocket.localAddress as InetSocketAddress).let {
             Address(it.hostname, it.port)
