@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
@@ -21,6 +22,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import okio.IOException
 import io.ktor.network.sockets.Socket as WrappedSocket
@@ -35,21 +37,25 @@ class KtorTcpServer(
 
   private val selectorManager = SelectorManager(dispatcher)
   private val serverScope = CoroutineScope(SupervisorJob() + dispatcher)
-  private var serverSocket: ServerSocket? = null
+  private var serverSocket: ServerSocket = runBlocking {
+    // Since Ktor 3.0.0, "bind" is a suspend function
+    // https://youtrack.jetbrains.com/issue/KTOR-7605
+    // We need to call "bind" during the constructor to keep the same behavior as before
+    aSocket(selectorManager).tcp().bind("127.0.0.1", port)
+  }
+  private var serverJob: Job? = null
 
   override fun listen(block: (socket: TcpSocket) -> Unit) {
     require(serverScope.isActive) { "Server is closed and cannot be restarted" }
-    require(serverSocket == null) { "Server is already started" }
+    require(serverJob == null) { "Server is already started" }
 
-    serverScope.launch(start = CoroutineStart.UNDISPATCHED) {
-      serverSocket = aSocket(selectorManager).tcp().bind("127.0.0.1", port)
-
+    serverJob = serverScope.launch(start = CoroutineStart.UNDISPATCHED) {
       while (isActive) {
         if (acceptDelayMillis > 0) {
           delay(acceptDelayMillis.toLong())
         }
         val socket: WrappedSocket = try {
-          serverSocket!!.accept()
+          serverSocket.accept()
         } catch (t: Throwable) {
           if (t is CancellationException) {
             throw t
@@ -68,7 +74,7 @@ class KtorTcpServer(
 
   override suspend fun address(): Address {
     require(serverScope.isActive) { "Server is closed" }
-    requireNotNull(serverSocket) { "Server is not listening, please call listen() before calling address()" }
+    requireNotNull(serverJob) { "Server is not listening, please call listen() before calling address()" }
 
     return withTimeout(1000) {
       var address: Address? = null
@@ -91,14 +97,15 @@ class KtorTcpServer(
   }
 
   override fun close() {
-    serverSocket?.let { serverSocket ->
+    serverJob?.let { serverJob ->
       // Cancel the server scope only if the server was started before
       // If the server was not started, the scope keeps being active and server can be started for the first time
       // Otherwise, the scope is cancelled to prevent the server from being started again
       serverScope.cancel()
       selectorManager.close()
       serverSocket.close()
-      this.serverSocket = null
+      serverJob.cancel()
+      this.serverJob = null
     }
   }
 }
