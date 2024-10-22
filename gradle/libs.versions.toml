@@ -20,5 +20,5 @@ ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
 ktor-client-core = { group = "io.ktor", name= "ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { group = "io.ktor", name= "ktor-client-cio", version.ref = "ktor" }
 ktor-client-js = { group = "io.ktor", name= "ktor-client-js", version.ref = "ktor" }
-librarian = "com.gradleup.librarian:librarian-gradle-plugin:0.0.5"
+librarian = "com.gradleup.librarian:librarian-gradle-plugin:0.0.6"
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
