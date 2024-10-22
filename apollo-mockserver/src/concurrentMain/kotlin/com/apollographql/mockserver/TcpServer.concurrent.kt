@@ -49,7 +49,7 @@ class KtorTcpServer(
     require(serverScope.isActive) { "Server is closed and cannot be restarted" }
     require(serverJob == null) { "Server is already started" }
 
-    serverJob = serverScope.launch(start = CoroutineStart.UNDISPATCHED) {
+    serverJob = serverScope.launch {
       while (isActive) {
         if (acceptDelayMillis > 0) {
           delay(acceptDelayMillis.toLong())
