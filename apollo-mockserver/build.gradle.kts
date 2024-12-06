@@ -1,6 +1,5 @@
 import com.gradleup.librarian.gradle.librarianModule
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
   id("org.jetbrains.kotlin.multiplatform")
@@ -24,7 +23,7 @@ kotlin {
   js(IR) {
     nodejs()
   }
-  @OptIn(ExperimentalWasmDsl::class)
+  @Suppress("OPT_IN_USAGE")
   wasmJs {
     nodejs()
   }
@@ -78,6 +77,11 @@ kotlin {
     findByName("jsTest")?.apply {
       dependencies {
         implementation(libs.ktor.client.js)
+      }
+    }
+    findByName("wasmJsMain")!!.apply {
+      dependencies {
+        implementation(libs.kotlin.stdlib.wasm.js)
       }
     }
 
