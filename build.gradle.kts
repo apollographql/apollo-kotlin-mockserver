@@ -1,8 +1,9 @@
 import com.gradleup.librarian.gradle.librarianRoot
 
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("2.0.0").apply(false)
+    alias(libs.plugins.kgp).apply(false)
     id("com.gradleup.librarian").version("0.0.6").apply(false)
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.3" apply false
 }
 
 librarianRoot()
