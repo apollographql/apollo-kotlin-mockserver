@@ -20,6 +20,8 @@ kotlin {
   tvosArm64()
   tvosX64()
   tvosSimulatorArm64()
+  linuxArm64()
+  linuxX64()
   js(IR) {
     nodejs()
   }
@@ -35,8 +37,12 @@ kotlin {
         group("concurrent") {
           group("apple")
           withJvm()
+          withLinuxArm64()
+          withLinuxX64()
         }
         withJvm()
+        withLinuxArm64()
+        withLinuxX64()
       }
     }
   }
