@@ -40,6 +40,7 @@ abstract interface com.apollographql.mockserver/MockServer : okio/Closeable { //
         final fun handler(com.apollographql.mockserver/MockServerHandler): com.apollographql.mockserver/MockServer.Builder // com.apollographql.mockserver/MockServer.Builder.handler|handler(com.apollographql.mockserver.MockServerHandler){}[0]
         final fun listener(com.apollographql.mockserver/MockServer.Listener): com.apollographql.mockserver/MockServer.Builder // com.apollographql.mockserver/MockServer.Builder.listener|listener(com.apollographql.mockserver.MockServer.Listener){}[0]
         final fun port(kotlin/Int): com.apollographql.mockserver/MockServer.Builder // com.apollographql.mockserver/MockServer.Builder.port|port(kotlin.Int){}[0]
+        final fun scope(kotlinx.coroutines/CoroutineScope): com.apollographql.mockserver/MockServer.Builder // com.apollographql.mockserver/MockServer.Builder.scope|scope(kotlinx.coroutines.CoroutineScope){}[0]
         final fun tcpServer(com.apollographql.mockserver/TcpServer): com.apollographql.mockserver/MockServer.Builder // com.apollographql.mockserver/MockServer.Builder.tcpServer|tcpServer(com.apollographql.mockserver.TcpServer){}[0]
     }
 }

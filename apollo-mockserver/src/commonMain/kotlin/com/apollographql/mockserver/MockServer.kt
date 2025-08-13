@@ -86,6 +86,7 @@ interface MockServer : Closeable {
     private var tcpServer: TcpServer? = null
     private var listener: Listener? = null
     private var port: Int? = null
+    private var scope: CoroutineScope? = null
 
     fun handler(handler: MockServerHandler) = apply {
       this.handler = handler
@@ -107,16 +108,21 @@ interface MockServer : Closeable {
       this.listener = listener
     }
 
+    fun scope(scope: CoroutineScope) = apply {
+      this.scope = scope
+    }
+
     fun build(): MockServer {
       check(tcpServer == null || port == null) {
         "It is an error to set both tcpServer and port"
       }
       val server = tcpServer ?: TcpServer(port ?: 0)
       return MockServerImpl(
-          handler ?: QueueMockServerHandler(),
-          handlePings ?: true,
-          server,
-          listener
+        mockServerHandler = handler ?: QueueMockServerHandler(),
+        handlePings = handlePings ?: true,
+        server = server,
+        listener = listener,
+        scope = scope ?: defaultCoroutineScope()
       )
     }
   }
@@ -127,9 +133,9 @@ internal class MockServerImpl(
     private val handlePings: Boolean,
     private val server: TcpServer,
     private val listener: MockServer.Listener?,
+    private val scope: CoroutineScope
 ) : MockServer {
   private val requests = Channel<MockRequestBase>(Channel.UNLIMITED)
-  private val scope = CoroutineScope(SupervisorJob())
 
   init {
     server.listen(::onSocket)
@@ -268,7 +274,8 @@ fun MockServer(): MockServer = MockServerImpl(
     QueueMockServerHandler(),
     true,
     TcpServer(0),
-    null
+    null,
+    defaultCoroutineScope()
 )
 
 @Deprecated("Use MockServer.Builder() instead", level = DeprecationLevel.ERROR)
@@ -277,8 +284,11 @@ fun MockServer(handler: MockServerHandler): MockServer =
       handler,
       true,
       TcpServer(0),
-      null
+      null,
+      defaultCoroutineScope()
   )
+
+private fun defaultCoroutineScope() = CoroutineScope(SupervisorJob())
 
 @Deprecated("Use enqueueString instead", ReplaceWith("enqueueString(string = string, delayMs = delayMs, statusCode = statusCode)"), DeprecationLevel.ERROR)
 fun MockServer.enqueue(string: String = "", delayMs: Long = 0, statusCode: Int = 200) = enqueueString(string, delayMs, statusCode)

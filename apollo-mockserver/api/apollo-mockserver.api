@@ -87,6 +87,7 @@ public final class com/apollographql/mockserver/MockServer$Builder {
 	public final fun handler (Lcom/apollographql/mockserver/MockServerHandler;)Lcom/apollographql/mockserver/MockServer$Builder;
 	public final fun listener (Lcom/apollographql/mockserver/MockServer$Listener;)Lcom/apollographql/mockserver/MockServer$Builder;
 	public final fun port (I)Lcom/apollographql/mockserver/MockServer$Builder;
+	public final fun scope (Lkotlinx/coroutines/CoroutineScope;)Lcom/apollographql/mockserver/MockServer$Builder;
 	public final fun tcpServer (Lcom/apollographql/mockserver/TcpServer;)Lcom/apollographql/mockserver/MockServer$Builder;
 }
 
