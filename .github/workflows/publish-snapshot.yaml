@@ -12,5 +12,5 @@ jobs:
       - run: |
           ./gradlew librarianPublishToSnapshots
         env:
-          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.LIBRARIAN_SONATYPE_USERNAME }}
-          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.LIBRARIAN_SONATYPE_PASSWORD }}
+          LIBRARIAN_SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          LIBRARIAN_SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
