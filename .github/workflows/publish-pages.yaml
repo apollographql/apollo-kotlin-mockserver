@@ -1,5 +1,3 @@
-name: Publish documentation
-
 on:
   push:
     branches: ["main"]
@@ -26,7 +24,6 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda #v3.4.2
       - run: |
-          export JAVA_HOME=$JAVA_HOME_21_X64 # Remove when ubuntu-latest updates to Java 21
           ./gradlew dokkatooGeneratePublicationHtml
           mkdir -p build/static
           cp -rf build/dokka/html build/static/kdoc
@@ -36,3 +33,4 @@ jobs:
         with:
           branch: gh-pages # The branch the action should deploy to.
           folder: build/static # The folder the action should deploy.
+
