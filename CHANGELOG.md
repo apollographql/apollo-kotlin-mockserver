@@ -3,6 +3,8 @@
 # Version 0.2.0
 _2025-08-15_
 
+Allow passing in a scope to the MockServer constructor in #27
+
 # Version 0.1.1
 _2025-03-17_
 
