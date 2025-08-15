@@ -1,7 +1,12 @@
 # Next version (unreleased)
 
+# Version 0.2.0
+_2025-08-15_
+
 # Version 0.1.1
 _2025-03-17_
+
+* Add support for linux (https://github.com/apollographql/apollo-kotlin-mockserver/pull/22).
 
 # Version 0.1.0
 _2024-10-23_
