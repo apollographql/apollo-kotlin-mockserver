@@ -7,7 +7,7 @@ okhttp = "4.12.0"
 kotlin = "2.1.0"
 
 [libraries]
-kotlin-node = "org.jetbrains.kotlin-wrappers:kotlin-node:22.5.5-pre.844"
+kotlin-node = "org.jetbrains.kotlin-wrappers:kotlin-node:2025.8.16-22.13.10"
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlin-stdlib-wasm-js = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-wasm-js", version.ref = "kotlin" }
