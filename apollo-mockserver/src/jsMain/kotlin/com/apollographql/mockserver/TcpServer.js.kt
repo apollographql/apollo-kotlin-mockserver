@@ -4,7 +4,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.IOException
 import org.w3c.dom.events.Event
-import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import com.apollographql.mockserver.Server as WrappedServer
 import com.apollographql.mockserver.Socket as WrappedSocket
@@ -90,4 +89,4 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
   }
 }
 
-actual fun TcpServer(port: Int, context: CoroutineContext): TcpServer = NodeTcpServer(port)
+actual fun TcpServer(port: Int): TcpServer = NodeTcpServer(port)

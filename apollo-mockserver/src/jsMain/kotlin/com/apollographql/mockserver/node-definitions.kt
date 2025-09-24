@@ -6,7 +6,7 @@ import org.khronos.webgl.Uint8Array
 /**
  * https://nodejs.org/docs/latest/api/buffer.html
  */
-interface Buffer {
+external interface Buffer {
   val buffer: ArrayBuffer
 }
 
