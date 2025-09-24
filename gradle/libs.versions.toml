@@ -4,23 +4,24 @@ ktor = "3.0.0"
 atomicfu = "0.25.0"
 kotlinx-coroutines = "1.9.0"
 okhttp = "4.12.0"
-kotlin = "2.1.0"
+kgp = "2.2.20"
 
 [libraries]
-kotlin-node = "org.jetbrains.kotlin-wrappers:kotlin-node:22.5.5-pre.844"
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
-kotlin-stdlib-wasm-js = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-wasm-js", version.ref = "kotlin" }
+kotlin-stdlib-wasm-js = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-wasm-js", version.ref = "kgp" }
 okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 atomicfu-library = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "atomicfu" }
 ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-server-cio = { group = "io.ktor", name = "ktor-server-cio", version.ref = "ktor" }
 ktor-server-websockets = { group = "io.ktor", name = "ktor-server-websockets", version.ref = "ktor" }
 ktor-network = { module = "io.ktor:ktor-network", version.ref = "ktor" }
-ktor-client-core = { group = "io.ktor", name= "ktor-client-core", version.ref = "ktor" }
-ktor-client-cio = { group = "io.ktor", name= "ktor-client-cio", version.ref = "ktor" }
-ktor-client-js = { group = "io.ktor", name= "ktor-client-js", version.ref = "ktor" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-js = { group = "io.ktor", name = "ktor-client-js", version.ref = "ktor" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 
 [plugins]
-kgp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin"}
+kgp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kgp" }
+librarian = { id = "com.gradleup.librarian", version = "0.1.1-SNAPSHOT-4b2cda1c023f0fad4064d8ccb7ab6ca4d10d09f1" }
+nmcp = { id = "com.gradleup.nmcp", version = "1.1.1-SNAPSHOT-79a7d177a1f1b73774d157982aab8550222268d3" }

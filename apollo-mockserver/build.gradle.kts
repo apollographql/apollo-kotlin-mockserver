@@ -24,6 +24,7 @@ kotlin {
   linuxX64()
   js(IR) {
     nodejs()
+    useCommonJs()
   }
   @Suppress("OPT_IN_USAGE")
   wasmJs {
@@ -60,7 +61,6 @@ kotlin {
 
     findByName("jsMain")?.apply {
       dependencies {
-        implementation(libs.kotlin.node)
       }
     }
 
