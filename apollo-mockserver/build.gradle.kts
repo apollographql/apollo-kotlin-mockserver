@@ -114,9 +114,15 @@ kotlin {
   }
 }
 
-tasks.withType<KotlinNativeTest>().configureEach {
-  if (this !is KotlinNativeHostTest) {
-    // Only run the MacOS tests to save some time and assume all Darwin OSes will behave the same 🤞
-    enabled = false
+if (System.getenv("CI") == "true") {
+  listOf(
+    "watchosSimulatorArm64Test",
+    "iosX64Test",
+    "tvosSimulatorArm64Test",
+    "iosSimulatorArm64Test",
+    "tvosX64Test"
+  ).forEach {
+    println("Task '$it' is long and is skipped in CI.")
+    gradle.startParameter.excludedTaskNames.add(it)
   }
 }

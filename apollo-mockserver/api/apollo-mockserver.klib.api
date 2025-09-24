@@ -172,7 +172,7 @@ final object com.apollographql.mockserver/PingFrame : com.apollographql.mockserv
 
 final object com.apollographql.mockserver/PongFrame : com.apollographql.mockserver/WebSocketMessage // com.apollographql.mockserver/PongFrame|null[0]
 
-final const val com.apollographql.mockserver/VERSION // com.apollographql.mockserver/VERSION|{}VERSION[0]
+final val com.apollographql.mockserver/VERSION // com.apollographql.mockserver/VERSION|{}VERSION[0]
     final fun <get-VERSION>(): kotlin/String // com.apollographql.mockserver/VERSION.<get-VERSION>|<get-VERSION>(){}[0]
 
 final fun (com.apollographql.mockserver/MockServer).com.apollographql.mockserver/assertNoRequest() // com.apollographql.mockserver/assertNoRequest|assertNoRequest@com.apollographql.mockserver.MockServer(){}[0]
@@ -199,3 +199,46 @@ final class com.apollographql.mockserver/KtorTcpServer : com.apollographql.mocks
     final fun listen(kotlin/Function1<com.apollographql.mockserver/TcpSocket, kotlin/Unit>) // com.apollographql.mockserver/KtorTcpServer.listen|listen(kotlin.Function1<com.apollographql.mockserver.TcpSocket,kotlin.Unit>){}[0]
     final suspend fun address(): com.apollographql.mockserver/Address // com.apollographql.mockserver/KtorTcpServer.address|address(){}[0]
 }
+
+// Targets: [js]
+abstract interface com.apollographql.mockserver/AddressInfo { // com.apollographql.mockserver/AddressInfo|null[0]
+    abstract var address // com.apollographql.mockserver/AddressInfo.address|{}address[0]
+        abstract fun <get-address>(): kotlin/String // com.apollographql.mockserver/AddressInfo.address.<get-address>|<get-address>(){}[0]
+        abstract fun <set-address>(kotlin/String) // com.apollographql.mockserver/AddressInfo.address.<set-address>|<set-address>(kotlin.String){}[0]
+    abstract var family // com.apollographql.mockserver/AddressInfo.family|{}family[0]
+        abstract fun <get-family>(): kotlin/String // com.apollographql.mockserver/AddressInfo.family.<get-family>|<get-family>(){}[0]
+        abstract fun <set-family>(kotlin/String) // com.apollographql.mockserver/AddressInfo.family.<set-family>|<set-family>(kotlin.String){}[0]
+    abstract var port // com.apollographql.mockserver/AddressInfo.port|{}port[0]
+        abstract fun <get-port>(): kotlin/Double // com.apollographql.mockserver/AddressInfo.port.<get-port>|<get-port>(){}[0]
+        abstract fun <set-port>(kotlin/Double) // com.apollographql.mockserver/AddressInfo.port.<set-port>|<set-port>(kotlin.Double){}[0]
+}
+
+// Targets: [js]
+abstract interface com.apollographql.mockserver/Buffer { // com.apollographql.mockserver/Buffer|null[0]
+    abstract val buffer // com.apollographql.mockserver/Buffer.buffer|{}buffer[0]
+        abstract fun <get-buffer>(): org.khronos.webgl/ArrayBuffer // com.apollographql.mockserver/Buffer.buffer.<get-buffer>|<get-buffer>(){}[0]
+}
+
+// Targets: [js]
+abstract interface com.apollographql.mockserver/Server { // com.apollographql.mockserver/Server|null[0]
+    abstract fun address(): kotlin/Any? // com.apollographql.mockserver/Server.address|address(){}[0]
+    abstract fun close() // com.apollographql.mockserver/Server.close|close(){}[0]
+    abstract fun listen(kotlin/Int) // com.apollographql.mockserver/Server.listen|listen(kotlin.Int){}[0]
+    abstract fun on(kotlin/String, kotlin/Function1<dynamic, kotlin/Unit>) // com.apollographql.mockserver/Server.on|on(kotlin.String;kotlin.Function1<<dynamic>,kotlin.Unit>){}[0]
+}
+
+// Targets: [js]
+abstract interface com.apollographql.mockserver/Socket { // com.apollographql.mockserver/Socket|null[0]
+    abstract fun destroy() // com.apollographql.mockserver/Socket.destroy|destroy(){}[0]
+    abstract fun on(kotlin/String, kotlin/Function1<dynamic, kotlin/Unit>) // com.apollographql.mockserver/Socket.on|on(kotlin.String;kotlin.Function1<<dynamic>,kotlin.Unit>){}[0]
+    abstract fun write(org.khronos.webgl/Uint8Array, kotlin/Function1<dynamic, kotlin/Unit>): kotlin/Boolean // com.apollographql.mockserver/Socket.write|write(org.khronos.webgl.Uint8Array;kotlin.Function1<<dynamic>,kotlin.Unit>){}[0]
+}
+
+// Targets: [js]
+final fun (kotlin/ByteArray).com.apollographql.mockserver/toUint8Array(): org.khronos.webgl/Uint8Array // com.apollographql.mockserver/toUint8Array|toUint8Array@kotlin.ByteArray(){}[0]
+
+// Targets: [js]
+final fun (org.khronos.webgl/ArrayBuffer).com.apollographql.mockserver/toByteArray(): kotlin/ByteArray // com.apollographql.mockserver/toByteArray|toByteArray@org.khronos.webgl.ArrayBuffer(){}[0]
+
+// Targets: [js]
+final fun com.apollographql.mockserver/createServer(kotlin/Function1<com.apollographql.mockserver/Socket, kotlin/Unit>): com.apollographql.mockserver/Server // com.apollographql.mockserver/createServer|createServer(kotlin.Function1<com.apollographql.mockserver.Socket,kotlin.Unit>){}[0]
