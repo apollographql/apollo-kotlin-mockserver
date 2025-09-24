@@ -6,14 +6,14 @@ import org.khronos.webgl.Uint8Array
 /**
  * https://nodejs.org/docs/latest/api/buffer.html
  */
-external interface Buffer {
+internal external interface Buffer {
   val buffer: ArrayBuffer
 }
 
 /***
  * https://nodejs.org/docs/latest/api/net.html
  */
-external interface Socket {
+internal external interface Socket {
   fun on(event: String, listener: (dynamic) -> Unit)
   fun destroy()
   fun write(
@@ -22,14 +22,14 @@ external interface Socket {
   ): Boolean
 }
 
-external interface Server {
+internal external interface Server {
   fun listen(port: Int)
   fun close()
   fun address(): Any?
   fun on(event: String, listener: (dynamic) -> Unit)
 }
 
-external interface AddressInfo {
+internal external interface AddressInfo {
   var address: String
   var family: String
   var port: Double

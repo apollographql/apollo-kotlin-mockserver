@@ -6,4 +6,4 @@
 package com.apollographql.mockserver
 
 
-external fun createServer(requestListener: (Socket) -> Unit): Server
+internal external fun createServer(requestListener: (Socket) -> Unit): Server
