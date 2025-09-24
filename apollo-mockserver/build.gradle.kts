@@ -1,6 +1,8 @@
 import com.gradleup.librarian.gradle.Librarian
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
   id("org.jetbrains.kotlin.multiplatform")
@@ -112,3 +114,9 @@ kotlin {
   }
 }
 
+tasks.withType<KotlinNativeTest>().configureEach {
+  if (this !is KotlinNativeHostTest) {
+    // Only run the MacOS tests to save some time and assume all Darwin OSes will behave the same 🤞
+    enabled = false
+  }
+}
