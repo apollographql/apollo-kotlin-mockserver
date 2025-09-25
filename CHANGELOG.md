@@ -1,5 +1,12 @@
 # Next version (unreleased)
 
+# Version 0.3.0
+_2025-09-25_
+
+Bump Kotlin to 2.2.20 and remove `kotlin-node` dependency (#35).
+
+If you're using non-JVM targets, you'll need Kotlin 2.2 to build. JVM targets are not impacted.
+
 # Version 0.2.0
 _2025-08-15_
 
