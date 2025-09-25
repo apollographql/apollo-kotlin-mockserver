@@ -1,5 +1,8 @@
 import com.gradleup.librarian.gradle.Librarian
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 
 plugins {
   id("org.jetbrains.kotlin.multiplatform")
@@ -22,8 +25,9 @@ kotlin {
   tvosSimulatorArm64()
   linuxArm64()
   linuxX64()
-  js(IR) {
+  js {
     nodejs()
+    useCommonJs()
   }
   @Suppress("OPT_IN_USAGE")
   wasmJs {
@@ -40,6 +44,7 @@ kotlin {
           withLinuxArm64()
           withLinuxX64()
         }
+        withJs()
         withJvm()
         withLinuxArm64()
         withLinuxX64()
@@ -60,7 +65,7 @@ kotlin {
 
     findByName("jsMain")?.apply {
       dependencies {
-        implementation(libs.kotlin.node)
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-js:${getKotlinPluginVersion()}")
       }
     }
 
@@ -83,6 +88,7 @@ kotlin {
     findByName("jsTest")?.apply {
       dependencies {
         implementation(libs.ktor.client.js)
+        implementation("org.jetbrains.kotlin:kotlin-test-js:${getKotlinPluginVersion()}")
       }
     }
     findByName("wasmJsMain")!!.apply {
@@ -108,3 +114,15 @@ kotlin {
   }
 }
 
+if (System.getenv("CI") == "true") {
+  listOf(
+    "watchosSimulatorArm64Test",
+    "iosX64Test",
+    "tvosSimulatorArm64Test",
+    "iosSimulatorArm64Test",
+    "tvosX64Test"
+  ).forEach {
+    println("Task '$it' is long and is skipped in CI.")
+    gradle.startParameter.excludedTaskNames.add(it)
+  }
+}

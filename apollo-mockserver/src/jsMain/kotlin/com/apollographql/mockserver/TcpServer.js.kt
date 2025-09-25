@@ -1,24 +1,23 @@
 package com.apollographql.mockserver
 
-import js.typedarrays.toUint8Array
 import kotlinx.coroutines.channels.Channel
-import node.events.once
-import node.net.AddressInfo
-import node.net.createServer
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okio.IOException
 import org.w3c.dom.events.Event
-import node.net.Server as WrappedServer
-import node.net.Socket as WrappedSocket
+import kotlin.coroutines.resume
+import com.apollographql.mockserver.Server as WrappedServer
+import com.apollographql.mockserver.Socket as WrappedSocket
 
 internal class NodeTcpSocket(private val netSocket: WrappedSocket) : TcpSocket {
   private val readQueue = Channel<ByteArray>(Channel.UNLIMITED)
 
   init {
-    netSocket.dataEvent.addHandler { (chunk) ->
-      readQueue.trySend(chunk.toByteArray())
+    netSocket.on("data") { chunk ->
+      val buffer = chunk.unsafeCast<Buffer>()
+      readQueue.trySend(buffer.buffer.toByteArray())
     }
 
-    netSocket.closeEvent.addHandler { _ ->
+    netSocket.on("close") { _ ->
       readQueue.close(IOException("The socket was closed"))
     }
   }
@@ -29,7 +28,7 @@ internal class NodeTcpSocket(private val netSocket: WrappedSocket) : TcpSocket {
 
   override fun send(data: ByteArray) {
     // Enqueue everything
-    netSocket.write(data.toUint8Array())
+    netSocket.write(data.toUint8Array()) {}
   }
 
   override fun close() {
@@ -57,6 +56,12 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
     }
   }
 
+  private suspend fun WrappedServer.waitForListening() = suspendCancellableCoroutine { continuation ->
+    on("listening") {
+      continuation.resume(Unit)
+    }
+  }
+
   override suspend fun address(): Address {
     require(!isClosed) { "Server is closed" }
     val server = requireNotNull(this.server) { "Server is not listening, please call listen() before calling address()" }
@@ -65,7 +70,7 @@ internal class NodeTcpServer(private val port: Int) : TcpServer {
       return address!!
     }
 
-    server.listeningEvent.once()
+    server.waitForListening()
 
     val ai = server.address().unsafeCast<AddressInfo>()
     address = Address(ai.address, ai.port.toInt())
