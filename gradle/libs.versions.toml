@@ -23,5 +23,5 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 
 [plugins]
 kgp = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kgp" }
-librarian = { id = "com.gradleup.librarian", version = "0.1.1-SNAPSHOT-4b2cda1c023f0fad4064d8ccb7ab6ca4d10d09f1" }
+librarian = { id = "com.gradleup.librarian", version = "0.2.1" }
 nmcp = { id = "com.gradleup.nmcp", version = "1.1.1-SNAPSHOT-79a7d177a1f1b73774d157982aab8550222268d3" }
