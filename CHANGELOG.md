@@ -1,5 +1,10 @@
 # Next version (unreleased)
 
+# Version 0.3.1
+_2025-11-17_
+
+This version adds the `watchosDeviceArm64` target. Many thanks @MatthewFolbigg for diving into this 💙
+
 # Version 0.3.0
 _2025-09-25_
 
